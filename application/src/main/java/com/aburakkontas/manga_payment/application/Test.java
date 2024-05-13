@@ -1,4 +1,267 @@
 package com.aburakkontas.manga_payment.application;
 
+import com.iyzipay.Options;
+import com.iyzipay.model.*;
+import com.iyzipay.request.CreateBkmInitializeRequest;
+import com.iyzipay.request.CreateCheckoutFormInitializeRequest;
+import com.iyzipay.request.CreatePaymentRequest;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Test {
+    public static void TestMe() {
+        Options options = new Options();
+        options.setApiKey("sandbox-9pPPSQnmE7P4LHcFuR4fGDB6La3M1UKb");
+        options.setSecretKey("sandbox-JLle8wN5m5tLVtyKsbw1vBVlaFqGvCso");
+        options.setBaseUrl("https://sandbox-api.iyzipay.com");
+
+        CreatePaymentRequest request = new CreatePaymentRequest();
+        request.setLocale(Locale.TR.getValue());
+        request.setConversationId("123456789");
+        request.setPrice(new BigDecimal("1"));
+        request.setPaidPrice(new BigDecimal("1.2"));
+        request.setCurrency(Currency.TRY.name());
+        request.setInstallment(1);
+        request.setBasketId("B67832");
+        request.setPaymentChannel(PaymentChannel.WEB.name());
+        request.setPaymentGroup(PaymentGroup.PRODUCT.name());
+
+        PaymentCard paymentCard = new PaymentCard();
+        paymentCard.setCardHolderName("John Doe");
+        paymentCard.setCardNumber("4111111111111129");
+        paymentCard.setExpireMonth("12");
+        paymentCard.setExpireYear("2030");
+        paymentCard.setCvc("123");
+        paymentCard.setRegisterCard(0);
+        request.setPaymentCard(paymentCard);
+
+        Buyer buyer = new Buyer();
+        buyer.setId("BY789");
+        buyer.setName("John");
+        buyer.setSurname("Doe");
+        buyer.setGsmNumber("+905350000000");
+        buyer.setEmail("email@email.com");
+        buyer.setIdentityNumber("74300864791");
+        buyer.setLastLoginDate("2015-10-05 12:43:35");
+        buyer.setRegistrationDate("2013-04-21 15:12:09");
+        buyer.setRegistrationAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        buyer.setIp("85.34.78.112");
+        buyer.setCity("Istanbul");
+        buyer.setCountry("Turkey");
+        buyer.setZipCode("34732");
+        request.setBuyer(buyer);
+
+        Address shippingAddress = new Address();
+        shippingAddress.setContactName("Jane Doe");
+        shippingAddress.setCity("Istanbul");
+        shippingAddress.setCountry("Turkey");
+        shippingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        shippingAddress.setZipCode("34742");
+        request.setShippingAddress(shippingAddress);
+
+        Address billingAddress = new Address();
+        billingAddress.setContactName("Jane Doe");
+        billingAddress.setCity("Istanbul");
+        billingAddress.setCountry("Turkey");
+        billingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        billingAddress.setZipCode("34742");
+        request.setBillingAddress(billingAddress);
+
+        List<BasketItem> basketItems = new ArrayList<>();
+        BasketItem firstBasketItem = new BasketItem();
+        firstBasketItem.setId("BI101");
+        firstBasketItem.setName("Binocular");
+        firstBasketItem.setCategory1("Collectibles");
+        firstBasketItem.setCategory2("Accessories");
+        firstBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        firstBasketItem.setPrice(new BigDecimal("0.3"));
+        basketItems.add(firstBasketItem);
+
+        BasketItem secondBasketItem = new BasketItem();
+        secondBasketItem.setId("BI102");
+        secondBasketItem.setName("Game code");
+        secondBasketItem.setCategory1("Game");
+        secondBasketItem.setCategory2("Online Game Items");
+        secondBasketItem.setItemType(BasketItemType.VIRTUAL.name());
+        secondBasketItem.setPrice(new BigDecimal("0.5"));
+        basketItems.add(secondBasketItem);
+
+        BasketItem thirdBasketItem = new BasketItem();
+        thirdBasketItem.setId("BI103");
+        thirdBasketItem.setName("Usb");
+        thirdBasketItem.setCategory1("Electronics");
+        thirdBasketItem.setCategory2("Usb / Cable");
+        thirdBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        thirdBasketItem.setPrice(new BigDecimal("0.2"));
+        basketItems.add(thirdBasketItem);
+        request.setBasketItems(basketItems);
+
+        Payment payment = Payment.create(request, options);
+
+        System.out.println(payment);
+    }
+
+    public static CheckoutFormInitialize TestMe2() {
+        Options options = new Options();
+        options.setApiKey("sandbox-9pPPSQnmE7P4LHcFuR4fGDB6La3M1UKb");
+        options.setSecretKey("sandbox-JLle8wN5m5tLVtyKsbw1vBVlaFqGvCso");
+        options.setBaseUrl("https://sandbox-api.iyzipay.com");
+
+        CreateCheckoutFormInitializeRequest request = new CreateCheckoutFormInitializeRequest();
+        request.setLocale(Locale.TR.getValue());
+        request.setConversationId("123456789");
+        request.setPrice(new BigDecimal("1.0"));
+        request.setPaidPrice(new BigDecimal("1.2"));
+        request.setCurrency(Currency.TRY.name());
+        request.setBasketId("B678313213212");
+        request.setPaymentGroup("PRODUCT123321");
+        request.setCallbackUrl("http://localhost:8080/payment-callback");
+
+        Buyer buyer = new Buyer();
+        buyer.setId("BY789123213");
+        buyer.setName("John");
+        buyer.setSurname("Doe");
+        buyer.setIdentityNumber("74300864791");
+        buyer.setEmail("burakkontass@gmail.com");
+        buyer.setGsmNumber("+905350000000");
+        buyer.setRegistrationDate("2013-04-21 15:12:09");
+        buyer.setLastLoginDate("2015-10-05 12:43:35");
+        buyer.setRegistrationAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        buyer.setCity("Istanbul");
+        buyer.setCountry("Turkey");
+        buyer.setZipCode("34732");
+        buyer.setIp("85.34.78.112");
+        request.setBuyer(buyer);
+
+        Address shippingAddress = new Address();
+        shippingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        shippingAddress.setZipCode("34742");
+        shippingAddress.setContactName("Jane Doe");
+        shippingAddress.setCity("Istanbul");
+        shippingAddress.setCountry("Turkey");
+        request.setShippingAddress(shippingAddress);
+
+        Address billingAddress = new Address();
+        billingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        billingAddress.setZipCode("34742");
+        billingAddress.setContactName("Jane Doe");
+        billingAddress.setCity("Istanbul");
+        billingAddress.setCountry("Turkey");
+        request.setBillingAddress(billingAddress);
+
+        List<BasketItem> basketItems = new ArrayList<>();
+        BasketItem firstBasketItem = new BasketItem();
+        firstBasketItem.setId("BI101");
+        firstBasketItem.setName("Binocular");
+        firstBasketItem.setCategory1("Collectibles");
+        firstBasketItem.setCategory2("Accessories");
+        firstBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        firstBasketItem.setPrice(new BigDecimal("0.3"));
+        basketItems.add(firstBasketItem);
+
+        BasketItem secondBasketItem = new BasketItem();
+        secondBasketItem.setId("BI102");
+        secondBasketItem.setName("Game code");
+        secondBasketItem.setCategory1("Game");
+        secondBasketItem.setCategory2("Online Game Items");
+        secondBasketItem.setItemType(BasketItemType.VIRTUAL.name());
+        secondBasketItem.setPrice(new BigDecimal("0.5"));
+        basketItems.add(secondBasketItem);
+
+        BasketItem thirdBasketItem = new BasketItem();
+        thirdBasketItem.setId("BI103");
+        thirdBasketItem.setName("Usb");
+        thirdBasketItem.setCategory1("Electronics");
+        thirdBasketItem.setCategory2("Usb / Cable");
+        thirdBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        thirdBasketItem.setPrice(new BigDecimal("0.2"));
+        basketItems.add(thirdBasketItem);
+        request.setBasketItems(basketItems);
+
+        CheckoutFormInitialize checkoutFormInitialize = CheckoutFormInitialize.create(request, options);
+
+        return checkoutFormInitialize;
+    }
+
+    public static BkmInitialize TestMe3() {
+        Options options = new Options();
+        options.setApiKey("sandbox-9pPPSQnmE7P4LHcFuR4fGDB6La3M1UKb");
+        options.setSecretKey("sandbox-JLle8wN5m5tLVtyKsbw1vBVlaFqGvCso");
+        options.setBaseUrl("https://sandbox-api.iyzipay.com");
+
+        CreateBkmInitializeRequest request = new CreateBkmInitializeRequest();
+        request.setLocale(Locale.TR.getValue());
+        request.setConversationId("123456789");
+        request.setPrice(new BigDecimal("1.0"));
+        request.setBasketId("B67832");
+        request.setCallbackUrl("https://webhook.site/dfb950c9-9488-4c9d-a5ed-f089a093adca");
+
+        Buyer buyer = new Buyer();
+        buyer.setId("BY789123213");
+        buyer.setName("John");
+        buyer.setSurname("Doe");
+        buyer.setIdentityNumber("74300864791");
+        buyer.setEmail("email@email.com");
+        buyer.setGsmNumber("+905350000000");
+        buyer.setRegistrationDate("2013-04-21 15:12:09");
+        buyer.setLastLoginDate("2015-10-05 12:43:35");
+        buyer.setRegistrationAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        buyer.setCity("Istanbul");
+        buyer.setCountry("Turkey");
+        buyer.setZipCode("34732");
+        buyer.setIp("85.34.78.112");
+        request.setBuyer(buyer);
+
+        Address shippingAddress = new Address();
+        shippingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        shippingAddress.setZipCode("34742");
+        shippingAddress.setContactName("Jane Doe");
+        shippingAddress.setCity("Istanbul");
+        shippingAddress.setCountry("Turkey");
+        request.setShippingAddress(shippingAddress);
+
+        Address billingAddress = new Address();
+        billingAddress.setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
+        billingAddress.setZipCode("34742");
+        billingAddress.setContactName("Jane Doe");
+        billingAddress.setCity("Istanbul");
+        billingAddress.setCountry("Turkey");
+        request.setBillingAddress(billingAddress);
+
+        List<BasketItem> basketItems = new ArrayList<>();
+        BasketItem firstBasketItem = new BasketItem();
+        firstBasketItem.setId("BI101");
+        firstBasketItem.setName("Binocular");
+        firstBasketItem.setCategory1("Collectibles");
+        firstBasketItem.setCategory2("Accessories");
+        firstBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        firstBasketItem.setPrice(new BigDecimal("0.3"));
+        basketItems.add(firstBasketItem);
+
+        BasketItem secondBasketItem = new BasketItem();
+        secondBasketItem.setId("BI102");
+        secondBasketItem.setName("Game code");
+        secondBasketItem.setCategory1("Game");
+        secondBasketItem.setCategory2("Online Game Items");
+        secondBasketItem.setItemType(BasketItemType.VIRTUAL.name());
+        secondBasketItem.setPrice(new BigDecimal("0.5"));
+        basketItems.add(secondBasketItem);
+
+        BasketItem thirdBasketItem = new BasketItem();
+        thirdBasketItem.setId("BI103");
+        thirdBasketItem.setName("Usb");
+        thirdBasketItem.setCategory1("Electronics");
+        thirdBasketItem.setCategory2("Usb / Cable");
+        thirdBasketItem.setItemType(BasketItemType.PHYSICAL.name());
+        thirdBasketItem.setPrice(new BigDecimal("0.2"));
+        basketItems.add(thirdBasketItem);
+        request.setBasketItems(basketItems);
+
+        BkmInitialize bkmInitialize = BkmInitialize.create(request, options);
+
+        return bkmInitialize;
+    }
 }
