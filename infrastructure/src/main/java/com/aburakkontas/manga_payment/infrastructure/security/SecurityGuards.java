@@ -1,9 +1,12 @@
 package com.aburakkontas.manga_payment.infrastructure.security;
 
+import com.aburakkontas.manga.common.auth.queries.ValidateTokenQuery;
+import com.aburakkontas.manga.common.auth.queries.results.ValidateTokenQueryResult;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -12,7 +15,6 @@ import java.io.IOException;
 
 @Component
 public class SecurityGuards {
-
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final JwtAuthEntryPoint authEntryPoint;
@@ -28,7 +30,16 @@ public class SecurityGuards {
         return StringUtils.hasText(token);
     }
 
-    public boolean isValidToken() throws IOException {
+    public boolean isValidToken(QueryGateway queryGateway) throws IOException {
+        var token = extractToken();
+        var query = ValidateTokenQuery.builder()
+                .token(token)
+                .build();
+
+        var result = queryGateway.query(query, ValidateTokenQueryResult.class).join();
+
+        if(result.isValid()) return true;
+
         var exception = new ExceptionWithErrorCode("Unauthorized", HttpServletResponse.SC_UNAUTHORIZED);
         authEntryPoint.commence(request, response, exception);
         return false;

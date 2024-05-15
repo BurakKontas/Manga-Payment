@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +19,12 @@ import java.util.ArrayList;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtAuthEntryPoint authEntryPoint;
+    private final QueryGateway queryGateway;
 
     @Autowired
-    public JWTAuthenticationFilter(JwtAuthEntryPoint authEntryPoint) {
+    public JWTAuthenticationFilter(JwtAuthEntryPoint authEntryPoint, QueryGateway queryGateway) {
         this.authEntryPoint = authEntryPoint;
+        this.queryGateway = queryGateway;
     }
 
 
@@ -32,7 +35,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         var securityGuards = new SecurityGuards(request, response, authEntryPoint);
 
         if(securityGuards.hasTokenGuard()) {
-            if(securityGuards.isValidToken()) return;
+            if(securityGuards.isValidToken(queryGateway)) return;
 
             var username = "aburakkontas@hotmail.com";
             var authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
