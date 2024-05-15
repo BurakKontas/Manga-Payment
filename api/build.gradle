@@ -13,10 +13,7 @@ java {
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('springCloudVersion', "2023.0.1")
+    mavenLocal()
 }
 
 dependencies {
@@ -31,6 +28,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.axonframework:axon-spring-boot-starter:4.9.3'
+    implementation 'com.aburakkontas.manga.common:interactions:1.0.2'
     runtimeOnly 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

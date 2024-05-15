@@ -1,8 +1,14 @@
 package com.aburakkontas.manga_payment.api.controllers;
 
+import com.aburakkontas.manga.common.auth.queries.*;
+import com.aburakkontas.manga.common.auth.queries.results.*;
+import com.aburakkontas.manga_payment.api.ent.GetAllErrorCodesResponse;
 import com.aburakkontas.manga_payment.application.Test;
 import com.iyzipay.model.BkmInitialize;
 import com.iyzipay.model.CheckoutFormInitialize;
+import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
+    private final QueryGateway  queryGateway;
+
+    @Autowired
+    public TestController(QueryGateway queryGateway) {
+        this.queryGateway = queryGateway;
+    }
     @GetMapping("/test")
     public String test() {
         Test.TestMe();
@@ -33,6 +45,19 @@ public class TestController {
     public String paymentCallback(@RequestBody Object data) {
         System.out.println(data);
         return "OK";
+    }
+
+    @GetMapping("/test4")
+    public ResponseEntity<GetAllErrorCodesResponse> test4() {
+        var query = GetAllErrorCodesQuery.builder()
+                .build();
+
+        var result = queryGateway.query(query, GetAllErrorCodesQueryResult.class).join();
+
+        var response = new GetAllErrorCodesResponse();
+        response.setErrorCodes(result.getErrorCodes());
+
+        return ResponseEntity.ok(response);
     }
 
 //    @PostMapping("/fusionauth-user-verified-callback")
