@@ -49,12 +49,13 @@ public class TestController {
 
     @GetMapping("/test4")
     public ResponseEntity<Result<GetAllErrorCodesQueryResult>> test4() {
-        var query = GetAllErrorCodesQuery.builder()
-                .build();
-
-        var result = queryGateway.query(query, GetAllErrorCodesQueryResult.class).join();
-
-        return ResponseEntity.ok(Result.success(result));
+//        var query = GetAllErrorCodesQuery.builder()
+//                .build();
+//
+//        var result = queryGateway.query(query, GetAllErrorCodesQueryResult.class).join();
+//
+//        return ResponseEntity.ok(Result.success(result));
+        return null;
     }
 
 //    @PostMapping("/fusionauth-user-verified-callback")

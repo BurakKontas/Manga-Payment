@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.api;
+package com.aburakkontas.manga_payment.infrastructure.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
