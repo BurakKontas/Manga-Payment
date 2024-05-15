@@ -2,8 +2,8 @@ package com.aburakkontas.manga_payment.api.controllers;
 
 import com.aburakkontas.manga.common.auth.queries.*;
 import com.aburakkontas.manga.common.auth.queries.results.*;
-import com.aburakkontas.manga_payment.api.ent.GetAllErrorCodesResponse;
 import com.aburakkontas.manga_payment.application.Test;
+import com.aburakkontas.manga_payment.domain.primitives.Result;
 import com.iyzipay.model.BkmInitialize;
 import com.iyzipay.model.CheckoutFormInitialize;
 import org.axonframework.queryhandling.QueryGateway;
@@ -48,16 +48,13 @@ public class TestController {
     }
 
     @GetMapping("/test4")
-    public ResponseEntity<GetAllErrorCodesResponse> test4() {
+    public ResponseEntity<Result<GetAllErrorCodesQueryResult>> test4() {
         var query = GetAllErrorCodesQuery.builder()
                 .build();
 
         var result = queryGateway.query(query, GetAllErrorCodesQueryResult.class).join();
 
-        var response = new GetAllErrorCodesResponse();
-        response.setErrorCodes(result.getErrorCodes());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Result.success(result));
     }
 
 //    @PostMapping("/fusionauth-user-verified-callback")

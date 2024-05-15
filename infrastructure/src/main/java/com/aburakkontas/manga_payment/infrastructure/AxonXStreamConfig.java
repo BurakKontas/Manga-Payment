@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.api;
+package com.aburakkontas.manga_payment.infrastructure;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.AnyTypePermission;
