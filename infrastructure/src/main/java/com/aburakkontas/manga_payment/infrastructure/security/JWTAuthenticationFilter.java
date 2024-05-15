@@ -31,17 +31,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         var securityGuards = new SecurityGuards(request, response, authEntryPoint);
 
-        if(securityGuards.isPermitAll(filterChain)) return;
+        if(securityGuards.hasTokenGuard()) {
+            if(securityGuards.isValidToken()) return;
 
-
-        var token = securityGuards.extractToken();
-        if(!securityGuards.hasTokenGuard()) return;
-        if(securityGuards.isValidToken()) return;
-
-        var username = "aburakkontas@hotmail.com";
-        var authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            var username = "aburakkontas@hotmail.com";
+            var authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
