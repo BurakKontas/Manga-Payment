@@ -35,7 +35,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         var securityGuards = new SecurityGuards(request, response, authEntryPoint);
 
         if(securityGuards.hasTokenGuard()) {
-            if(securityGuards.isValidToken(queryGateway)) return;
+            if(!securityGuards.isValidToken(queryGateway)) return;
 
             var username = "aburakkontas@hotmail.com";
             var authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
