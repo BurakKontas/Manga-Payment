@@ -44,9 +44,9 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/docs"
                         ).permitAll()
-                        .requestMatchers("/test1").denyAll()
-                        .requestMatchers("/test4").permitAll()
-                        .requestMatchers("/test").hasAuthority("Admin")
+                        .requestMatchers("/api/v1/payments/get-all").hasAuthority("Admin")
+                        .requestMatchers("/api/v1/items/get-**").authenticated()
+                        .requestMatchers("/api/v1/items/**").hasAuthority("Admin")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

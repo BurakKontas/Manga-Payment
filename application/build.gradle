@@ -13,6 +13,7 @@ java {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -20,8 +21,14 @@ dependencies {
     implementation 'com.google.code.gson:gson'
     implementation 'org.apache.commons:commons-lang3'
     compileOnly 'org.projectlombok:lombok'
+    implementation 'com.aburakkontas.manga.common:interactions:1.0.2'
+    implementation 'org.axonframework:axon-spring-boot-starter:4.9.3'
+    implementation 'org.axonframework:axon-configuration:4.9.3'
+    implementation 'org.axonframework:axon-server-connector:4.9.3'
+    implementation 'com.google.guava:guava:33.1.0-jre'
     implementation "com.iyzipay:iyzipay-java:2.0.124"
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     annotationProcessor 'org.projectlombok:lombok'
 
     testCompileOnly 'org.projectlombok:lombok'
