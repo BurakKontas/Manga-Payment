@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.application.jpaRepositories;
+package com.aburakkontas.manga_payment.domain.repositories;
 
 import com.aburakkontas.manga_payment.domain.entities.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
 public interface ItemRepository extends JpaRepository<Item, UUID> {
 
     @Query("SELECT i FROM Item i WHERE i.id IN :id")

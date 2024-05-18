@@ -6,16 +6,17 @@ import lombok.Data;
 import java.util.UUID;
 
 @Entity
-@Table(name = "items")
+@Table(name = "images")
 @Data
-public class Item {
+public class Image {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private Double price;
-    private String category = "Credit";
-    private String description;
-    private UUID imageId;
-    private String itemType = "VIRTUAL";
+    private String type;
+
+    @Lob
+    @Column(name = "data" , length = 2000000000)
+    public byte[] data;
 }

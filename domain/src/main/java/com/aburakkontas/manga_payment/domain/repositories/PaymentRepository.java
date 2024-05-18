@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.application.jpaRepositories;
+package com.aburakkontas.manga_payment.domain.repositories;
 
 import com.aburakkontas.manga_payment.domain.entities.Payment;
 import org.springframework.data.domain.Page;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@Repository
 public interface PaymentRepository extends JpaRepository<Payment, String> {
 
     @Query("SELECT p FROM Payment p WHERE " +

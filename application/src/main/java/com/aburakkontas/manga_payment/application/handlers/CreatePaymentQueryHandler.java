@@ -4,10 +4,9 @@ import com.aburakkontas.manga.common.payment.queries.CreatePaymentQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreatePaymentQueryResult;
 import com.aburakkontas.manga_payment.domain.dtos.InitiliazeCheckoutFormDTO;
 import com.aburakkontas.manga_payment.domain.entities.Item;
-import com.aburakkontas.manga_payment.application.jpaRepositories.ItemRepository;
+import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
-import com.aburakkontas.manga_payment.application.jpaRepositories.PaymentRepository;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +18,27 @@ public class CreatePaymentQueryHandler {
 
     private final IyzicoRepository iyzicoRepository;
     private final ItemRepository itemRepository;
-    private final PaymentRepository paymentRepository;
 
-    public CreatePaymentQueryHandler(IyzicoRepository iyzicoRepository, ItemRepository itemRepository, PaymentRepository paymentRepository) {
+    public CreatePaymentQueryHandler(IyzicoRepository iyzicoRepository, ItemRepository itemRepository) {
         this.iyzicoRepository = iyzicoRepository;
         this.itemRepository = itemRepository;
-        this.paymentRepository = paymentRepository;
     }
 
     @QueryHandler
     public CreatePaymentQueryResult handle(CreatePaymentQuery createPaymentQuery) {
 
         var items = itemRepository.findByIds(createPaymentQuery.getItemIds());
+
+        if(items.isEmpty()) {
+            throw new ExceptionWithErrorCode("No items found", 404);
+        }
+
+        if(items.size() != createPaymentQuery.getItemIds().size()) {
+            var notFoundItems = createPaymentQuery.getItemIds();
+            notFoundItems.removeAll(items.stream().map(Item::getId).toList());
+            var notFoundItemsString = notFoundItems.stream().map(Object::toString).reduce("", (a, b) -> a + ", " + b);
+            throw new ExceptionWithErrorCode("Some items not found: " + notFoundItemsString , 404);
+        }
 
         var createPaymentDto = new InitiliazeCheckoutFormDTO();
         createPaymentDto.setUserId(createPaymentQuery.getUserId());
