@@ -25,7 +25,6 @@ public class ItemsController {
         this.queryGateway = queryGateway;
     }
 
-    //crud operations for item
     @PostMapping("/create-item")
     public ResponseEntity<Result<CreateItemResponse>> createItem(@RequestBody CreateItemRequest request) {
         var query = CreateItemQuery.builder()

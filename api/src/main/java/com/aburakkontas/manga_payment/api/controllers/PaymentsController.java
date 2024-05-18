@@ -4,17 +4,14 @@ import com.aburakkontas.manga.common.payment.queries.CreatePaymentQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreatePaymentQueryResult;
 import com.aburakkontas.manga_payment.contracts.request.CreatePaymentRequest;
 import com.aburakkontas.manga_payment.contracts.response.CreatePaymentResponse;
-import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.primitives.Result;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +25,7 @@ public class PaymentsController {
         this.queryGateway = queryGateway;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create-payment")
     public ResponseEntity<Result<CreatePaymentResponse>> createPayment(@RequestBody CreatePaymentRequest request, Authentication authentication) {
         var email = authentication.getPrincipal();
 
@@ -36,6 +33,7 @@ public class PaymentsController {
                 .userId(UUID.fromString(authentication.getCredentials().toString()))
                 .firstName(email.toString())
                 .lastName(email.toString())
+                .email(email.toString())
                 .itemIds(request.getItemIds())
                 .callbackUrl(request.getCallbackUrl())
                 .currency(request.getCurrency())
@@ -55,7 +53,7 @@ public class PaymentsController {
         return ResponseEntity.ok(Result.success(response));
     }
 
-    @GetMapping("/get")
+    @GetMapping("/get-payment")
     public void getPayment(@RequestParam UUID paymentId, Authentication authentication) {
         var isUserAdmin = isUserAdmin(authentication);
         //get payment admins can access all payments
@@ -67,7 +65,7 @@ public class PaymentsController {
         //  get payments
     }
 
-    @GetMapping("/get-by-user")
+    @GetMapping("/get-payment-by-user")
     public void getPaymentsByUser(@RequestParam UUID userId, Authentication authentication) {
         var isUserAdmin = isUserAdmin(authentication);
 

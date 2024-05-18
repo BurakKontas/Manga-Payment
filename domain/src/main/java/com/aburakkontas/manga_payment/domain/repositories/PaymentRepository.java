@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
@@ -20,10 +21,10 @@ public interface PaymentRepository extends JpaRepository<Payment, String> {
             "CASE WHEN :sort = 'paymentDate' THEN p.paymentDate ELSE null END, " +
             "CASE WHEN :order = 'ASC' THEN p.paymentDate ELSE null END ASC, " +
             "CASE WHEN :order = 'DESC' THEN p.paymentDate ELSE null END DESC")
-    Page<Payment> findPaymentsWithFilters(ZonedDateTime from,
-                                          ZonedDateTime to,
-                                          UUID userId,
-                                          String sort,
-                                          String order,
+    Page<Payment> findPaymentsWithFilters(@Param("from") ZonedDateTime from,
+                                          @Param("to") ZonedDateTime to,
+                                          @Param("userId") UUID userId,
+                                          @Param("sort") String sort,
+                                          @Param("order") String order,
                                           Pageable pageable);
 }

@@ -10,5 +10,5 @@ import java.util.UUID;
 public class CreatePaymentRequest {
     private ArrayList<UUID> itemIds;
     private String callbackUrl;
-    private String currency = "TRY";
+    private String currency;
 }

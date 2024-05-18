@@ -47,6 +47,7 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
         buyer.setName(initiliazeCheckoutFormDTO.getFirstName());
         buyer.setSurname(initiliazeCheckoutFormDTO.getLastName());
         buyer.setEmail(initiliazeCheckoutFormDTO.getEmail());
+        buyer.setIdentityNumber("00000000000");
         buyer.setRegistrationAddress("-");
         buyer.setCity("-");
         buyer.setCountry("-");
@@ -59,7 +60,7 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
         CreateCheckoutFormInitializeRequest request = new CreateCheckoutFormInitializeRequest();
         request.setLocale(Locale.TR.getValue());
         request.setConversationId(initiliazeCheckoutFormDTO.getUserId().toString());
-        request.setPrice(new BigDecimal(price * 100 / 20));
+        request.setPrice(new BigDecimal(price));
         request.setPaidPrice(new BigDecimal(price));
         request.setCurrency(Currency.TRY.name());
         request.setCallbackUrl(initiliazeCheckoutFormDTO.getCallbackUrl());
