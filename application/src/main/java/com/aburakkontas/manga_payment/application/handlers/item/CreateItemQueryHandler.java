@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.application.handlers;
+package com.aburakkontas.manga_payment.application.handlers.item;
 
 import com.aburakkontas.manga.common.payment.queries.CreateItemQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreateItemQueryResult;
@@ -7,9 +7,6 @@ import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Component
 public class CreateItemQueryHandler {

@@ -1,9 +1,18 @@
 package com.aburakkontas.manga_payment.api.controllers;
 
 import com.aburakkontas.manga.common.payment.queries.CreatePaymentQuery;
+import com.aburakkontas.manga.common.payment.queries.GetPaymentQuery;
+import com.aburakkontas.manga.common.payment.queries.GetPaymentsByUserQuery;
+import com.aburakkontas.manga.common.payment.queries.GetPaymentsQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreatePaymentQueryResult;
+import com.aburakkontas.manga.common.payment.queries.results.GetPaymentQueryResult;
+import com.aburakkontas.manga.common.payment.queries.results.GetPaymentsByUserQueryResult;
+import com.aburakkontas.manga.common.payment.queries.results.GetPaymentsQueryResult;
 import com.aburakkontas.manga_payment.contracts.request.CreatePaymentRequest;
 import com.aburakkontas.manga_payment.contracts.response.CreatePaymentResponse;
+import com.aburakkontas.manga_payment.contracts.response.GetPaymentResponse;
+import com.aburakkontas.manga_payment.contracts.response.GetPaymentsByUserResponse;
+import com.aburakkontas.manga_payment.contracts.response.GetPaymentsResponse;
 import com.aburakkontas.manga_payment.domain.primitives.Result;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -54,29 +64,117 @@ public class PaymentsController {
     }
 
     @GetMapping("/get-payment")
-    public void getPayment(@RequestParam UUID paymentId, Authentication authentication) {
-        var isUserAdmin = isUserAdmin(authentication);
+    public ResponseEntity<Result<GetPaymentResponse>> getPayment(
+            @RequestParam String paymentId,
+            @RequestParam UUID userId,
+            Authentication authentication
+    ) {
+        var executorId = UUID.fromString(authentication.getCredentials().toString());
 
+        if(userId == null) userId = executorId;
 
+        var query = GetPaymentQuery.builder()
+                .userId(userId)
+                .paymentId(paymentId)
+                .executorId(executorId)
+                .build();
+
+        var result = queryGateway.query(query, GetPaymentQueryResult.class).join();
+
+        var response = getPaymentResponse(result);
+
+        return ResponseEntity.ok(Result.success(response));
     }
 
     @GetMapping("/get-all")
-    public void getPayments() {
-        // only admin can access this endpoint
-        //  get payments
+    public ResponseEntity<Result<Void>> getPayments(
+        @RequestParam ZonedDateTime from,
+        @RequestParam ZonedDateTime to,
+        @RequestParam String sort,
+        @RequestParam Integer page,
+        @RequestParam Integer size,
+        @RequestParam String order
+    ) {
+        var query = GetPaymentsQuery.builder()
+                .from(from)
+                .to(to)
+                .sort(sort)
+                .page(page)
+                .size(size)
+                .order(order)
+                .build();
+
+        var result = queryGateway.query(query, GetPaymentsQueryResult.class).join();
+
+        var response = new GetPaymentsResponse();
+
+        // convert result to response
+        var payments = new ArrayList<GetPaymentResponse>();
+        for (var payment : result.getPayments()) {
+            var paymentResponse = getPaymentResponse(payment);
+            payments.add(paymentResponse);
+        }
+        response.setPayments(payments);
+
+        return ResponseEntity.ok(Result.success(null));
     }
 
-    @GetMapping("/get-payment-by-user")
-    public void getPaymentsByUser(@RequestParam UUID userId, Authentication authentication) {
-        var isUserAdmin = isUserAdmin(authentication);
+    @GetMapping("/get-payments-by-user")
+    public ResponseEntity<Result<GetPaymentsByUserResponse>> getPaymentsByUser(
+            @RequestParam UUID userId,
+            @RequestParam ZonedDateTime from,
+            @RequestParam ZonedDateTime to,
+            @RequestParam String sort,
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestParam String order,
+            Authentication authentication
+    ) {
+        var executorId = UUID.fromString(authentication.getCredentials().toString());
+        if(userId == null) userId = executorId;
 
-        // admins can access all users payments
-        //  get payments by user
+        var query = GetPaymentsByUserQuery.builder()
+                .from(from)
+                .to(to)
+                .sort(sort)
+                .page(page)
+                .size(size)
+                .order(order)
+                .userId(userId)
+                .executorId(executorId)
+                .build();
+
+        var result = queryGateway.query(query, GetPaymentsByUserQueryResult.class).join();
+
+        var response = new GetPaymentsByUserResponse();
+
+        // convert result to response
+        var payments = new ArrayList<GetPaymentResponse>();
+        for (var payment : result.getPayments()) {
+            var paymentResponse = getPaymentResponse(payment);
+            payments.add(paymentResponse);
+        }
+        response.setPayments(payments);
+        response.setUserId(userId);
+        response.setExecutorId(executorId);
+
+        return ResponseEntity.ok(Result.success(response));
     }
 
-    private boolean isUserAdmin(Authentication authentication) {
-        return authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Admin"));
-    }
 
+
+    private static GetPaymentResponse getPaymentResponse(GetPaymentQueryResult payment) {
+        var paymentResponse = new GetPaymentResponse();
+        paymentResponse.setUserId(payment.getUserId());
+        paymentResponse.setPaymentId(payment.getPaymentId());
+        paymentResponse.setPrice(payment.getPrice());
+        paymentResponse.setPaymentDate(payment.getPaymentDate());
+        paymentResponse.setCardType(payment.getCardType());
+        paymentResponse.setCardLastFourDigits(payment.getCardLastFourDigits());
+        paymentResponse.setCardFamily(payment.getCardFamily());
+        paymentResponse.setCardAssociation(payment.getCardAssociation());
+        paymentResponse.setItemIds(payment.getItemIds());
+        return paymentResponse;
+    }
 
 }

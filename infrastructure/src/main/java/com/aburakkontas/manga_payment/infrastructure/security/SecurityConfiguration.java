@@ -1,8 +1,10 @@
 package com.aburakkontas.manga_payment.infrastructure.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfiguration {
+
+    @Value("${webhook.header.secret}")
+    private String webhookSecret;
 
     private final JwtAuthEntryPoint authEntryPoint;
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
@@ -44,6 +49,13 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/docs"
                         ).permitAll()
+                        .requestMatchers("/api/v1/webhook/fusion-**").access((authentication, request) -> {
+                            var header = request.getRequest().getHeader("X-Webhook-Secret");
+                            if(header == null) return new AuthorizationDecision(false);
+
+                            return new AuthorizationDecision(header.equals(webhookSecret));
+                        })
+                        .requestMatchers("/api/v1/webhook/iyzico").permitAll()
                         .requestMatchers("/api/v1/payments/get-all").hasAuthority("Admin")
                         .requestMatchers("/api/v1/items/get-**").authenticated()
                         .requestMatchers("/api/v1/items/**").hasAuthority("Admin")

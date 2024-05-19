@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.application.handlers;
+package com.aburakkontas.manga_payment.application.handlers.payment;
 
 import com.aburakkontas.manga.common.payment.queries.CreatePaymentQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreatePaymentQueryResult;
@@ -7,16 +7,11 @@ import com.aburakkontas.manga_payment.domain.entities.Item;
 import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
-import io.axoniq.axonserver.grpc.ErrorMessage;
-import io.axoniq.axonserver.grpc.ErrorMessageOrBuilder;
-import org.axonframework.axonserver.connector.query.AxonServerRemoteQueryHandlingException;
-import org.axonframework.queryhandling.QueryExecutionException;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Component

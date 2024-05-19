@@ -1,26 +1,20 @@
-package com.aburakkontas.manga_payment.domain.entities;
+package com.aburakkontas.manga_payment.contracts.response;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
-@Entity
-@Table(name = "payments")
 @Data
-public class Payment {
-    @Id
-    private String paymentId;
+public class GetPaymentResponse {
     private UUID userId;
+    private String paymentId;
     private Double price;
     private ZonedDateTime paymentDate;
     private String cardType;
     private String cardLastFourDigits;
     private String cardFamily;
     private String cardAssociation;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    private ArrayList<Item> items;
+    private ArrayList<UUID> itemIds;
 }
