@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@Component
 public class CreateItemQueryHandler {
 
     private final ItemRepository itemRepository;

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class UpdateItemQueryHandler {
 
     private final ItemRepository itemRepository;
@@ -22,11 +22,12 @@ public class UpdateItemQueryHandler {
     public UpdateItemQueryResult handle(UpdateItemQuery query) {
         var item = itemRepository.findById(query.getItemId()).orElseThrow();
 
-        item.setName(query.getName());
-        item.setPrice(query.getPrice());
-        item.setCategory(query.getCategory());
-        item.setDescription(query.getDescription());
-        item.setItemType(query.getItemType());
+        if(query.getName() != null) item.setName(query.getName());
+        if(query.getPrice() != null) item.setPrice(query.getPrice());
+        if(query.getCategory() != null) item.setCategory(query.getCategory());
+        if(query.getDescription() != null) item.setDescription(query.getDescription());
+        if(query.getItemType() != null) item.setItemType(query.getItemType());
+        if(query.getImageId() != null) item.setImageId(query.getImageId());
 
         itemRepository.save(item);
 

@@ -56,7 +56,8 @@ public class PaymentsController {
     @GetMapping("/get-payment")
     public void getPayment(@RequestParam UUID paymentId, Authentication authentication) {
         var isUserAdmin = isUserAdmin(authentication);
-        //get payment admins can access all payments
+
+
     }
 
     @GetMapping("/get-all")

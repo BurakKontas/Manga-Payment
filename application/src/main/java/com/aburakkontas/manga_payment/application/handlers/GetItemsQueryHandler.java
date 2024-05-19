@@ -3,6 +3,7 @@ package com.aburakkontas.manga_payment.application.handlers;
 import com.aburakkontas.manga.common.payment.queries.GetAllItemsQuery;
 import com.aburakkontas.manga.common.payment.queries.results.GetAllItemsQueryResult;
 import com.aburakkontas.manga.common.payment.queries.results.GetItemQueryResult;
+import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-@Service
+@Component
 public class GetItemsQueryHandler {
 
     private final ItemRepository itemRepository;

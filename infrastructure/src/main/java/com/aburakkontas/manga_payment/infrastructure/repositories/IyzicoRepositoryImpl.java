@@ -25,9 +25,11 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
     }
 
     public CheckoutFormInitialize initializeCheck(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO) {
-        var paidPrice = initiliazeCheckoutFormDTO.getItems().stream().reduce(0.0, (subtotal, item) -> item.getPrice(), Double::sum);
+        var price = initiliazeCheckoutFormDTO.getItems().stream()
+                .mapToDouble(Item::getPrice)
+                .sum();
 
-        var request = createCheckoutFormInitializeRequest(initiliazeCheckoutFormDTO, paidPrice);
+        var request = createCheckoutFormInitializeRequest(initiliazeCheckoutFormDTO, price);
         var buyer = createBuyer(initiliazeCheckoutFormDTO);
         var address = createAddress(initiliazeCheckoutFormDTO);
         var basketItems = initiliazeCheckoutFormDTO.getItems().stream().map(this::createBasketItem).toList();

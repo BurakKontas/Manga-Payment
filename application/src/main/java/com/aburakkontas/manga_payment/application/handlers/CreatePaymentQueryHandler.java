@@ -7,11 +7,17 @@ import com.aburakkontas.manga_payment.domain.entities.Item;
 import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
+import io.axoniq.axonserver.grpc.ErrorMessage;
+import io.axoniq.axonserver.grpc.ErrorMessageOrBuilder;
+import org.axonframework.axonserver.connector.query.AxonServerRemoteQueryHandlingException;
+import org.axonframework.queryhandling.QueryExecutionException;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Component
 public class CreatePaymentQueryHandler {
@@ -27,6 +33,12 @@ public class CreatePaymentQueryHandler {
     @QueryHandler
     public CreatePaymentQueryResult handle(CreatePaymentQuery createPaymentQuery) {
 
+        var duplicateItemIds = createPaymentQuery.getItemIds().stream().filter(item -> createPaymentQuery.getItemIds().stream().filter(i -> i.equals(item)).count() > 1).collect(Collectors.toSet());
+
+        if (!duplicateItemIds.isEmpty()) {
+            throw new ExceptionWithErrorCode("Duplicate items found with IDs: " + duplicateItemIds, 400);
+        }
+
         var items = itemRepository.findByIds(createPaymentQuery.getItemIds());
 
         if(items.isEmpty()) {
@@ -36,8 +48,7 @@ public class CreatePaymentQueryHandler {
         if(items.size() != createPaymentQuery.getItemIds().size()) {
             var notFoundItems = createPaymentQuery.getItemIds();
             notFoundItems.removeAll(items.stream().map(Item::getId).toList());
-            var notFoundItemsString = notFoundItems.stream().map(Object::toString).reduce("", (a, b) -> a + ", " + b);
-            throw new ExceptionWithErrorCode("Some items not found: " + notFoundItemsString , 404);
+            throw new ExceptionWithErrorCode("Some items not found with IDs: " + notFoundItems , 404);
         }
 
         var createPaymentDto = new InitiliazeCheckoutFormDTO();
