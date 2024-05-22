@@ -54,7 +54,7 @@ public class CreatePaymentQueryHandler {
         createPaymentDto.setFirstName(createPaymentQuery.getFirstName());
         createPaymentDto.setLastName(createPaymentQuery.getLastName());
 
-        var checkout = iyzicoRepository.initializeCheck(createPaymentDto);
+        var checkout = iyzicoRepository.initializeCheckout(createPaymentDto);
 
         var isCompleted = checkout.getStatus().equals("success");
 

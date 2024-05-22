@@ -4,33 +4,50 @@ import com.aburakkontas.manga_payment.contracts.request.FusionAuthEmailVerifiedW
 import com.aburakkontas.manga_payment.contracts.request.IyzicoWebhookRequest;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @Hidden
 @RestController
 @RequestMapping(path = "/api/v1/webhook")
 public class WebhookController {
 
+    private static final Logger log = LoggerFactory.getLogger(WebhookController.class);
     private final CommandGateway commandGateway;
+    private final Environment env;
 
     @Autowired
-    public WebhookController(CommandGateway commandGateway) {
+    public WebhookController(CommandGateway commandGateway, Environment env) {
         this.commandGateway = commandGateway;
+        this.env = env;
     }
 
     @PostMapping("/fusion-verified")
     public ResponseEntity<Void> fusionVerified(@RequestBody FusionAuthEmailVerifiedWebhookRequest request) {
-
-        System.out.println("Fusion");
+        log.info("fusion webhook received: {}", request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/iyzico")
     public ResponseEntity<Void> iyzico(@RequestBody IyzicoWebhookRequest request) {
-        System.out.println("iyzico");
+        log.info("iyzico webhook received: {}", request);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/payment-successfully")
+    public ResponseEntity<Void> paymentSuccessfull() {
+        var redirectUri = env.getProperty("frontend.uri");
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(redirectUri))
+                .build();
     }
 
     //https://docs.iyzico.com/ek-servisler/webhook#direkt-format-1

@@ -2,6 +2,7 @@ package com.aburakkontas.manga_payment.api;
 
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.primitives.Result;
+import org.axonframework.queryhandling.QueryExecutionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +12,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result<String>> handleException(Exception ex) {
-        if (ex.getCause() instanceof ExceptionWithErrorCode) {
-            return new ResponseEntity<>(Result.failure(ex.getCause().getMessage(), ((ExceptionWithErrorCode) ex.getCause()).getCode()), HttpStatusCode.valueOf(((ExceptionWithErrorCode) ex.getCause()).getCode()));
-        } else {
-            return new ResponseEntity<>(Result.failure(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(QueryExecutionException.class)
+    public ResponseEntity<Result<String>> handleQueryExecutionException(QueryExecutionException ex) {
+        var details = ex.getDetails().orElseGet(ex::getMessage);
+        if(details instanceof Integer) {
+            return new ResponseEntity<>(Result.failure(ex.getMessage(), (Integer) details), HttpStatusCode.valueOf((Integer) details));
         }
+        return new ResponseEntity<>(Result.failure((String) details, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ExceptionWithErrorCode.class)
+    public ResponseEntity<Result<String>> handleExceptionWithErrorCode(ExceptionWithErrorCode ex) {
+        return new ResponseEntity<>(Result.failure(ex.getMessage(), ex.getCode()), HttpStatusCode.valueOf(ex.getCode()));
+    }
+
 }

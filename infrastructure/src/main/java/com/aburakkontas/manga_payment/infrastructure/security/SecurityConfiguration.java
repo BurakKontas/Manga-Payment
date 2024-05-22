@@ -54,6 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                         ).permitAll()
                         .requestMatchers("/api/v1/webhook/fusion-**").access(AuthorizationDecider::fusion)
                         .requestMatchers("/api/v1/webhook/iyzico").access(AuthorizationDecider::iyzico)
+                        .requestMatchers("/api/v1/webhook/payment-successfully").permitAll()
                         .requestMatchers("/api/v1/payments/get-all").hasAuthority("Admin")
                         .requestMatchers("/api/v1/items/get-**").authenticated()
                         .requestMatchers("/api/v1/items/**").hasAuthority("Admin")

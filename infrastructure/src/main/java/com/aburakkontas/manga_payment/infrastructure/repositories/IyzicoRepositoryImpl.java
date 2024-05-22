@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class IyzicoRepositoryImpl implements IyzicoRepository {
@@ -24,10 +25,12 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
         options.setBaseUrl(env.getProperty("iyzico.baseUrl"));
     }
 
-    public CheckoutFormInitialize initializeCheck(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO) {
-        var price = initiliazeCheckoutFormDTO.getItems().stream()
+    public CheckoutFormInitialize initializeCheckout(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO) {
+        var pricesSum = initiliazeCheckoutFormDTO.getItems().stream()
                 .mapToDouble(Item::getPrice)
                 .sum();
+
+        var price = new BigDecimal(pricesSum).setScale(2, RoundingMode.HALF_UP);
 
         var request = createCheckoutFormInitializeRequest(initiliazeCheckoutFormDTO, price);
         var buyer = createBuyer(initiliazeCheckoutFormDTO);
@@ -57,13 +60,13 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
         return buyer;
     }
 
-    private CreateCheckoutFormInitializeRequest createCheckoutFormInitializeRequest(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO, Double price) {
+    private CreateCheckoutFormInitializeRequest createCheckoutFormInitializeRequest(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO, BigDecimal price) {
 
         CreateCheckoutFormInitializeRequest request = new CreateCheckoutFormInitializeRequest();
         request.setLocale(Locale.TR.getValue());
         request.setConversationId(initiliazeCheckoutFormDTO.getUserId().toString());
-        request.setPrice(new BigDecimal(price));
-        request.setPaidPrice(new BigDecimal(price));
+        request.setPrice(price);
+        request.setPaidPrice(price);
         request.setCurrency(Currency.TRY.name());
         request.setCallbackUrl(initiliazeCheckoutFormDTO.getCallbackUrl());
 
