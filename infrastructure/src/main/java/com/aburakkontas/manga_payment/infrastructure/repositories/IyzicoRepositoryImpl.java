@@ -1,7 +1,7 @@
 package com.aburakkontas.manga_payment.infrastructure.repositories;
 
 import com.aburakkontas.manga_payment.domain.dtos.InitiliazeCheckoutFormDTO;
-import com.aburakkontas.manga_payment.domain.entities.Item;
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
 import com.iyzipay.Options;
 import com.iyzipay.model.*;

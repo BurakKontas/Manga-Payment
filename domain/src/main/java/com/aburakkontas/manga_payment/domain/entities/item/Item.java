@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_payment.domain.entities;
+package com.aburakkontas.manga_payment.domain.entities.item;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -39,6 +39,6 @@ public class GetPaymentQueryHandler {
         var payment = paymentRepository.findById(query.getPaymentId()).orElseThrow(
             () -> new ExceptionWithErrorCode("Payment not found with ID: " + query.getPaymentId(), 404)
         );
-        return PaymentMapper.mapToQueryResult(payment, null);
+        return PaymentMapper.mapToQueryResult(payment, query.getExecutorId());
     }
 }

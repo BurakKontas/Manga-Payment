@@ -1,8 +1,8 @@
 package com.aburakkontas.manga_payment.application.utils;
 
 import com.aburakkontas.manga.common.payment.queries.results.GetPaymentQueryResult;
-import com.aburakkontas.manga_payment.domain.entities.Item;
-import com.aburakkontas.manga_payment.domain.entities.Payment;
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
+import com.aburakkontas.manga_payment.domain.entities.payment.Payment;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -11,7 +11,7 @@ public class PaymentMapper {
     public static GetPaymentQueryResult mapToQueryResult(Payment payment, UUID executorId) {
         var queryResult = new GetPaymentQueryResult();
         queryResult.setPaymentId(payment.getPaymentId());
-        queryResult.setUserId(payment.getUserId());
+        queryResult.setUserId(payment.getUser().getUserId());
         queryResult.setCardAssociation(payment.getCardAssociation());
         queryResult.setCardFamily(payment.getCardFamily());
         queryResult.setCardType(payment.getCardType());

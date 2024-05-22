@@ -1,7 +1,7 @@
 package com.aburakkontas.manga_payment.application.utils;
 
 import com.aburakkontas.manga.common.payment.queries.results.GetItemQueryResult;
-import com.aburakkontas.manga_payment.domain.entities.Item;
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
 
 public class ItemMapper {
 

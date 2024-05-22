@@ -1,11 +1,12 @@
-package com.aburakkontas.manga_payment.domain.entities;
+package com.aburakkontas.manga_payment.domain.entities.payment;
 
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
+import com.aburakkontas.manga_payment.domain.entities.usercredit.UserCredit;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
@@ -13,7 +14,9 @@ import java.util.UUID;
 public class Payment {
     @Id
     private String paymentId;
-    private UUID userId;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserCredit user;
     private Double price;
     private ZonedDateTime paymentDate;
     private String cardType;

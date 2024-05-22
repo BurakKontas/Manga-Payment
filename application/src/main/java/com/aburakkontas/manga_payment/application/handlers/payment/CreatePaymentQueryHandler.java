@@ -3,7 +3,7 @@ package com.aburakkontas.manga_payment.application.handlers.payment;
 import com.aburakkontas.manga.common.payment.queries.CreatePaymentQuery;
 import com.aburakkontas.manga.common.payment.queries.results.CreatePaymentQueryResult;
 import com.aburakkontas.manga_payment.domain.dtos.InitiliazeCheckoutFormDTO;
-import com.aburakkontas.manga_payment.domain.entities.Item;
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;

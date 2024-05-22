@@ -4,14 +4,12 @@ import com.aburakkontas.manga.common.payment.queries.GetPaymentsQuery;
 import com.aburakkontas.manga.common.payment.queries.results.GetPaymentQueryResult;
 import com.aburakkontas.manga.common.payment.queries.results.GetPaymentsQueryResult;
 import com.aburakkontas.manga_payment.application.utils.PaymentMapper;
-import com.aburakkontas.manga_payment.domain.entities.Item;
-import com.aburakkontas.manga_payment.domain.entities.Payment;
+import com.aburakkontas.manga_payment.domain.entities.payment.Payment;
 import com.aburakkontas.manga_payment.domain.repositories.PaymentRepository;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Component
 public class GetAllPaymentsQueryHandler {

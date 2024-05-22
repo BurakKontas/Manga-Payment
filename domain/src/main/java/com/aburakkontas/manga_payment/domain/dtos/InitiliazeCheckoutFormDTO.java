@@ -1,6 +1,6 @@
 package com.aburakkontas.manga_payment.domain.dtos;
 
-import com.aburakkontas.manga_payment.domain.entities.Item;
+import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import lombok.Data;
 
 import java.util.ArrayList;

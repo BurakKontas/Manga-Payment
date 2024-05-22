@@ -1,5 +1,6 @@
 package com.aburakkontas.manga_payment.infrastructure.security;
 
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,21 +14,23 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfiguration {
 
-    @Value("${webhook.header.secret}")
-    private String webhookSecret;
-
     private final JwtAuthEntryPoint authEntryPoint;
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    private final CacheBodyHttpServletFilter cacheBodyHttpServletFilter;
 
     @Autowired
-    public SecurityConfiguration(JwtAuthEntryPoint authEntryPoint, JWTAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfiguration(JwtAuthEntryPoint authEntryPoint,
+                                 JWTAuthenticationFilter jwtAuthenticationFilter,
+                                 CacheBodyHttpServletFilter cacheBodyHttpServletFilter) {
         this.authEntryPoint = authEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.cacheBodyHttpServletFilter = cacheBodyHttpServletFilter;
     }
 
     @Bean
@@ -49,13 +52,8 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/docs"
                         ).permitAll()
-                        .requestMatchers("/api/v1/webhook/fusion-**").access((authentication, request) -> {
-                            var header = request.getRequest().getHeader("X-Webhook-Secret");
-                            if(header == null) return new AuthorizationDecision(false);
-
-                            return new AuthorizationDecision(header.equals(webhookSecret));
-                        })
-                        .requestMatchers("/api/v1/webhook/iyzico").permitAll()
+                        .requestMatchers("/api/v1/webhook/fusion-**").access(AuthorizationDecider::fusion)
+                        .requestMatchers("/api/v1/webhook/iyzico").access(AuthorizationDecider::iyzico)
                         .requestMatchers("/api/v1/payments/get-all").hasAuthority("Admin")
                         .requestMatchers("/api/v1/items/get-**").authenticated()
                         .requestMatchers("/api/v1/items/**").hasAuthority("Admin")
