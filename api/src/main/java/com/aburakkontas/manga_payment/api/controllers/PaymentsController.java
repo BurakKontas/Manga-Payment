@@ -45,7 +45,6 @@ public class PaymentsController {
                 .lastName(email.toString())
                 .email(email.toString())
                 .itemIds(request.getItemIds())
-                .callbackUrl(request.getCallbackUrl())
                 .currency(request.getCurrency())
                 .build();
 
