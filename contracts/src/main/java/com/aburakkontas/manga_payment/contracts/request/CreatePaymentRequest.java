@@ -9,5 +9,6 @@ import java.util.UUID;
 @Data
 public class CreatePaymentRequest {
     private ArrayList<UUID> itemIds;
+    private String callbackUrl;
     private String currency;
 }

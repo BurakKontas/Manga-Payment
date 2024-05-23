@@ -7,10 +7,14 @@ import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import com.aburakkontas.manga_payment.domain.repositories.ItemRepository;
 import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
@@ -50,6 +54,8 @@ public class CreatePaymentQueryHandler {
         }
 
         var callbackUrl = env.getProperty("iyzico.callbackUrl");
+        callbackUrl = MessageFormat.format("{0}/{1}", callbackUrl, createPaymentQuery.getCallbackUrl());
+
         var createPaymentDto = new InitiliazeCheckoutFormDTO();
         createPaymentDto.setUserId(createPaymentQuery.getUserId());
         createPaymentDto.setItems(items);
@@ -63,7 +69,7 @@ public class CreatePaymentQueryHandler {
         var isCompleted = checkout.getStatus().equals("success");
 
         if(!isCompleted) {
-            throw new ExceptionWithErrorCode(checkout.getErrorMessage(), 500);
+            throw new ExceptionWithErrorCode(checkout.getErrorMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
         var queryResult = new CreatePaymentQueryResult();

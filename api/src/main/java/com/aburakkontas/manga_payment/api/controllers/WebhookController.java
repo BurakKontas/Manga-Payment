@@ -2,6 +2,7 @@ package com.aburakkontas.manga_payment.api.controllers;
 
 import com.aburakkontas.manga_payment.contracts.request.FusionAuthEmailVerifiedWebhookRequest;
 import com.aburakkontas.manga_payment.contracts.request.IyzicoWebhookRequest;
+import com.aburakkontas.manga_payment.contracts.request.PaymentSuccessfullyRequest;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.text.MessageFormat;
 
 @Hidden
 @RestController
@@ -32,7 +34,7 @@ public class WebhookController {
     @PostMapping("/fusion-verified")
     public ResponseEntity<Void> fusionVerified(@RequestBody FusionAuthEmailVerifiedWebhookRequest request) {
         log.info("fusion webhook received: {}", request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/iyzico")
@@ -42,11 +44,11 @@ public class WebhookController {
     }
 
     @PostMapping("/payment-successfully")
-    public ResponseEntity<Void> paymentSuccessfull() {
-        var redirectUri = env.getProperty("frontend.uri");
-
+    public ResponseEntity<Void> paymentSuccessfully(@RequestParam String callbackUrl, @RequestBody PaymentSuccessfullyRequest request) {
+        log.info("payment successfully webhook received: {}", request.getToken());
+        var url = MessageFormat.format("{0}#paymentToken={1}", callbackUrl, request.getToken());
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(redirectUri))
+                .location(URI.create(url))
                 .build();
     }
 
