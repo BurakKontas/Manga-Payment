@@ -8,4 +8,5 @@ import java.util.UUID;
 public class UpdateItemResponse {
     private boolean updated;
     private UUID itemId;
+    private String imageUri;
 }

@@ -12,14 +12,6 @@ public class UpdateItemRequest {
     private String description;
     private Double price;
     private String category;
-    private ImageData image;
+    private UUID imageId;
     private String itemType;
-
-    @Data
-    @AllArgsConstructor
-    private static class ImageData {
-        private String name;
-        private byte[] data;
-        private String type;
-    }
 }

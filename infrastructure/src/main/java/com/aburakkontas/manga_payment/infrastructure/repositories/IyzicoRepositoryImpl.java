@@ -1,17 +1,22 @@
 package com.aburakkontas.manga_payment.infrastructure.repositories;
 
 import com.aburakkontas.manga_payment.domain.dtos.InitiliazeCheckoutFormDTO;
+import com.aburakkontas.manga_payment.domain.dtos.RetrieveCheckoutFormDTO;
+import com.aburakkontas.manga_payment.domain.dtos.RetrieveCheckoutFormResultDTO;
 import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
 import com.iyzipay.Options;
 import com.iyzipay.model.*;
 import com.iyzipay.request.CreateCheckoutFormInitializeRequest;
+import com.iyzipay.request.RetrieveCheckoutFormRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 public class IyzicoRepositoryImpl implements IyzicoRepository {
@@ -44,6 +49,36 @@ public class IyzicoRepositoryImpl implements IyzicoRepository {
 
         return CheckoutFormInitialize.create(request, options);
 
+    }
+
+    @Override
+    public RetrieveCheckoutFormResultDTO retrieveCheckoutForm(RetrieveCheckoutFormDTO retrieveCheckoutFormDTO) {
+        var request = new RetrieveCheckoutFormRequest();
+        request.setConversationId(retrieveCheckoutFormDTO.getConversationId());
+        request.setToken(retrieveCheckoutFormDTO.getToken());
+
+        var response = CheckoutForm.retrieve(request, options);
+
+        var itemIds = new ArrayList<UUID>();
+        response.getPaymentItems().forEach(paymentItem -> {
+            itemIds.add(UUID.fromString(paymentItem.getItemId()));
+        });
+
+        var result = new RetrieveCheckoutFormResultDTO(
+                response.getStatus().equals("success"),
+                response.getPrice().doubleValue(),
+                response.getPaidPrice().doubleValue(),
+                response.getPaymentId(),
+                response.getConversationId(),
+                response.getToken(),
+                response.getCardType(),
+                response.getCardAssociation(),
+                response.getCardFamily(),
+                response.getLastFourDigits(),
+                itemIds
+        );
+
+        return result;
     }
 
     private Buyer createBuyer(InitiliazeCheckoutFormDTO initiliazeCheckoutFormDTO) {

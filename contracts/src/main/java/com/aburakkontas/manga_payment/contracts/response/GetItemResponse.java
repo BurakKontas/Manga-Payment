@@ -13,4 +13,5 @@ public class GetItemResponse {
     private String category;
     private UUID imageId;
     private String itemType;
+    private String imageUri;
 }

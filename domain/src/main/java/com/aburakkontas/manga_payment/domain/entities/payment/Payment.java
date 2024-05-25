@@ -3,14 +3,20 @@ package com.aburakkontas.manga_payment.domain.entities.payment;
 import com.aburakkontas.manga_payment.domain.entities.item.Item;
 import com.aburakkontas.manga_payment.domain.entities.usercredit.UserCredit;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "payments")
 @Data
+@Builder
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
     @Id
     private String paymentId;
@@ -25,5 +31,9 @@ public class Payment {
     private String cardAssociation;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private ArrayList<Item> items;
+    private List<Item> items;
+
+    protected Payment() {
+
+    }
 }

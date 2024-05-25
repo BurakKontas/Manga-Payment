@@ -21,9 +21,6 @@ public class CreateItemQueryHandler {
     @QueryHandler
     public CreateItemQueryResult handle(CreateItemQuery query) {
 
-        //save image
-        //queryGateway send command to save image
-
         var item = new Item();
         item.setName(query.getName());
         item.setPrice(query.getPrice());
@@ -31,6 +28,7 @@ public class CreateItemQueryHandler {
         item.setCategory(query.getCategory());
         item.setDescription(query.getDescription());
         item.setItemType(query.getItemType());
+        item.setImageId(query.getImageId());
 
         var newItem = itemRepository.save(item);
 

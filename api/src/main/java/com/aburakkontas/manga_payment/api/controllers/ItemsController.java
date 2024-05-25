@@ -8,9 +8,11 @@ import com.aburakkontas.manga_payment.contracts.response.*;
 import com.aburakkontas.manga_payment.domain.primitives.Result;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -19,15 +21,18 @@ import java.util.UUID;
 public class ItemsController {
 
     private final QueryGateway queryGateway;
+    private final Environment env;
 
     @Autowired
-    public ItemsController(QueryGateway queryGateway) {
+    public ItemsController(QueryGateway queryGateway, Environment env) {
         this.queryGateway = queryGateway;
+        this.env = env;
     }
 
     @PostMapping("/create-item")
     public ResponseEntity<Result<CreateItemResponse>> createItem(@RequestBody CreateItemRequest request) {
         var query = CreateItemQuery.builder()
+                .imageId(request.getImageId())
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
@@ -37,9 +42,12 @@ public class ItemsController {
 
         var result = queryGateway.query(query, CreateItemQueryResult.class).join();
 
+        var imageUri = generateImageUri(request.getImageId());
+
         var response = new CreateItemResponse();
         response.setCreated(result.isCreated());
         response.setItemId(result.getItemId());
+        response.setImageUri(imageUri);
 
         return ResponseEntity.ok(Result.success(response));
     }
@@ -53,13 +61,17 @@ public class ItemsController {
                 .price(request.getPrice())
                 .category(request.getCategory())
                 .itemType(request.getItemType())
+                .imageId(request.getImageId())
                 .build();
 
         var result = queryGateway.query(query, UpdateItemQueryResult.class).join();
 
+        var imageUri = generateImageUri(request.getImageId());
+
         var response = new UpdateItemResponse();
         response.setUpdated(result.isUpdated());
         response.setItemId(result.getItemId());
+        response.setImageUri(imageUri);
 
         return ResponseEntity.ok(Result.success(response));
     }
@@ -87,14 +99,7 @@ public class ItemsController {
 
         var result = queryGateway.query(query, GetItemQueryResult.class).join();
 
-        var response = new GetItemResponse();
-        response.setItemId(result.getItemId());
-        response.setName(result.getName());
-        response.setDescription(result.getDescription());
-        response.setPrice(result.getPrice());
-        response.setCategory(result.getCategory());
-        response.setImageId(result.getImageId());
-        response.setItemType(result.getItemType());
+        var response = getItemResponse(result);
 
         return ResponseEntity.ok(Result.success(response));
     }
@@ -108,18 +113,30 @@ public class ItemsController {
         var response = new GetAllItemsResponse();
         var items = new ArrayList<GetItemResponse>();
         for (var item : result.getItems()) {
-            var itemResponse = new GetItemResponse();
-            itemResponse.setItemId(item.getItemId());
-            itemResponse.setName(item.getName());
-            itemResponse.setDescription(item.getDescription());
-            itemResponse.setPrice(item.getPrice());
-            itemResponse.setCategory(item.getCategory());
-            itemResponse.setImageId(item.getImageId());
-            itemResponse.setItemType(item.getItemType());
+            var itemResponse = getItemResponse(item);
             items.add(itemResponse);
         }
         response.setItems(items);
 
         return ResponseEntity.ok(Result.success(response));
+    }
+
+    private GetItemResponse getItemResponse(GetItemQueryResult item) {
+        var imageUri = generateImageUri(item.getImageId());
+
+        var response = new GetItemResponse();
+        response.setItemId(item.getItemId());
+        response.setName(item.getName());
+        response.setDescription(item.getDescription());
+        response.setPrice(item.getPrice());
+        response.setCategory(item.getCategory());
+        response.setImageId(item.getImageId());
+        response.setItemType(item.getItemType());
+        response.setImageUri(imageUri);
+        return response;
+    }
+
+    private String generateImageUri(UUID imageId) {
+        return MessageFormat.format("{0}/{1}/{2}", env.getProperty("cdn.uri"), env.getProperty("cdn.image.path"), imageId);
     }
 }

@@ -26,7 +26,17 @@ public class UserCredit {
     private List<Payment> payments;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private ArrayList<CreditTransaction> creditTransactions;
+    private List<CreditTransaction> creditTransactions;
+
+    public static UserCredit create(UUID userId) {
+        var user = new UserCredit();
+        user.setUserId(userId);
+        user.setCredit(0.0);
+        user.setPayments(new ArrayList<>());
+        user.setCreditTransactions(new ArrayList<>());
+
+        return user;
+    }
 
     public boolean addCredit(Double credit) {
         this.credit += credit;

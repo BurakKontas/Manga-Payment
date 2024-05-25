@@ -23,4 +23,5 @@ public class CreditTransaction {
     private Double balance;
     private String description;
     private boolean transactionSuccess;
+    private String paymentId;
 }

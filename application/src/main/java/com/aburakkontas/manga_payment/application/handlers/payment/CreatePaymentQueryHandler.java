@@ -54,7 +54,7 @@ public class CreatePaymentQueryHandler {
         }
 
         var callbackUrl = env.getProperty("iyzico.callbackUrl");
-        callbackUrl = MessageFormat.format("{0}/{1}", callbackUrl, createPaymentQuery.getCallbackUrl());
+        callbackUrl = MessageFormat.format("{0}?callbackUrl={1}", callbackUrl, createPaymentQuery.getCallbackUrl());
 
         var createPaymentDto = new InitiliazeCheckoutFormDTO();
         createPaymentDto.setUserId(createPaymentQuery.getUserId());
