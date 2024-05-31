@@ -4,6 +4,7 @@ import com.aburakkontas.manga_payment.domain.entities.payment.Payment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -23,10 +24,24 @@ public class UserCredit {
     private Double credit;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Payment> payments;
+    @Getter(AccessLevel.PRIVATE)
+    private List<Payment> payments = List.of();
+
+    @Transient
+    private ArrayList<Payment> paymentsList = this.getPaymentList();
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CreditTransaction> creditTransactions;
+    @Getter(AccessLevel.PRIVATE)
+    private List<CreditTransaction> creditTransactions = List.of();
+
+    @Transient
+    private ArrayList<CreditTransaction> transactions = this.getTransactions();
+
+    @Transient
+    private ArrayList<CreditTransaction> successfulTransactions = this.getSuccessfulTransactions();
+
+    @Transient
+    private ArrayList<CreditTransaction> failedTransactions = this.getFailedTransactions();
 
     public static UserCredit create(UUID userId) {
         var user = new UserCredit();
@@ -60,6 +75,22 @@ public class UserCredit {
     public boolean hasCredit(Double credit) {
         this.addTransaction(credit, CreditTransactionTypes.CHECK_CREDIT, "Checking if user has enough credit.", true);
         return this.credit >= credit;
+    }
+
+    public ArrayList<Payment> getPaymentList() {
+        return new ArrayList<>(payments);
+    }
+
+    public ArrayList<CreditTransaction> getTransactions() {
+        return new ArrayList<>(creditTransactions);
+    }
+
+    public ArrayList<CreditTransaction> getSuccessfulTransactions() {
+        return new ArrayList<>(creditTransactions.stream().filter(CreditTransaction::isTransactionSuccess).toList());
+    }
+
+    public ArrayList<CreditTransaction> getFailedTransactions() {
+        return new ArrayList<>(creditTransactions.stream().filter(transaction -> !transaction.isTransactionSuccess()).toList());
     }
 
     private CreditTransaction createTransaction(Double credit, CreditTransactionTypes transactionType, String description, boolean transactionSuccess) {
