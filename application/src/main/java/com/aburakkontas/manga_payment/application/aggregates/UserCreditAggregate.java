@@ -2,7 +2,11 @@ package com.aburakkontas.manga_payment.application.aggregates;
 
 import com.aburakkontas.manga.common.payment.commands.AddCreditCommand;
 import com.aburakkontas.manga.common.payment.commands.CreateUserCreditCommand;
+import com.aburakkontas.manga.common.payment.commands.DeductCreditCommand;
+import com.aburakkontas.manga.common.payment.commands.RefundCreditCommand;
 import com.aburakkontas.manga.common.payment.events.AddCreditEvent;
+import com.aburakkontas.manga.common.payment.events.DeductCreditEvent;
+import com.aburakkontas.manga.common.payment.events.RefundCreditEvent;
 import com.aburakkontas.manga.common.payment.events.UserCreditCreatedEvent;
 import com.aburakkontas.manga_payment.domain.repositories.UserCreditRepository;
 import org.axonframework.commandhandling.CommandHandler;
@@ -18,6 +22,7 @@ import java.util.UUID;
 public class UserCreditAggregate {
 
     @AggregateIdentifier
+    private UUID id = UUID.randomUUID();
     private String userId;
 
     protected UserCreditAggregate() {
@@ -39,7 +44,7 @@ public class UserCreditAggregate {
     }
 
     @CommandHandler
-    public void handle(AddCreditCommand command) {
+    public UserCreditAggregate(AddCreditCommand command) {
         var addCreditEvent = new AddCreditEvent();
         addCreditEvent.setUserId(command.getUserId());
         addCreditEvent.setToken(command.getToken());
@@ -50,5 +55,33 @@ public class UserCreditAggregate {
     @EventSourcingHandler
     public void on(AddCreditEvent event) {
         this.userId = event.getUserId();
+    }
+
+    @CommandHandler
+    public UserCreditAggregate(DeductCreditCommand command) {
+        var deductCreditEvent = new DeductCreditEvent();
+        deductCreditEvent.setUserId(command.getUserId());
+        deductCreditEvent.setCredit(command.getCredit());
+
+        AggregateLifecycle.apply(deductCreditEvent);
+    }
+
+    @EventSourcingHandler
+    public void on(DeductCreditEvent event) {
+        this.userId = String.valueOf(event.getUserId());
+    }
+
+    @CommandHandler
+    public UserCreditAggregate(RefundCreditCommand command) {
+        var userCreditRefundEvent = new RefundCreditEvent();
+        userCreditRefundEvent.setUserId(command.getUserId());
+        userCreditRefundEvent.setCredit(command.getCredit());
+
+        AggregateLifecycle.apply(userCreditRefundEvent);
+    }
+
+    @EventSourcingHandler
+    public void on(RefundCreditEvent event) {
+        this.userId = String.valueOf(event.getUserId());
     }
 }
