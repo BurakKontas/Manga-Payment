@@ -23,7 +23,7 @@ public class PaymentAggregate {
     @CommandHandler
     public PaymentAggregate(PaymentReceivedCommand command) {
         // handle the command logic here
-        if(command.getStatus().equals("SUCCESS")) {
+        if(command.getStatus().equalsIgnoreCase("success")) {
             var addCreditEvent = new AddCreditEvent();
             addCreditEvent.setToken(command.getToken());
             addCreditEvent.setUserId(command.getUserId());

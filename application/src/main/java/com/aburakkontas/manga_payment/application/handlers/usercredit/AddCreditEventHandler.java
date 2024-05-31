@@ -9,6 +9,8 @@ import com.aburakkontas.manga_payment.domain.repositories.IyzicoRepository;
 import com.aburakkontas.manga_payment.domain.repositories.PaymentRepository;
 import com.aburakkontas.manga_payment.domain.repositories.UserCreditRepository;
 import org.axonframework.eventhandling.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @Component
 public class AddCreditEventHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(AddCreditEventHandler.class);
     private final IyzicoRepository iyzicoRepository;
     private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
@@ -62,5 +65,7 @@ public class AddCreditEventHandler {
             .build();
 
         paymentRepository.save(payment);
+
+        log.info("Credit added successfully for user: {} price {}", userId, checkoutForm.getPrice());
     }
 }

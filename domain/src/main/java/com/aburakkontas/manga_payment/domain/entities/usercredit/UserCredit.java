@@ -58,7 +58,7 @@ public class UserCredit {
     }
 
     public boolean hasCredit(Double credit) {
-        this.addTransaction(credit, CreditTransactionTypes.SUBTRACT_CREDIT, "Checking if user has enough credit.", true);
+        this.addTransaction(credit, CreditTransactionTypes.CHECK_CREDIT, "Checking if user has enough credit.", true);
         return this.credit >= credit;
     }
 
