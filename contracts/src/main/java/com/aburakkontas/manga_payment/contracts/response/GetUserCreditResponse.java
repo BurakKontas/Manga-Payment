@@ -9,7 +9,6 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class GetUserCreditResponse {
     private Double credit;
-    private ArrayList<?> payments;
     private ArrayList<?> successfulTransactions;
     private ArrayList<?> failedTransactions;
 }

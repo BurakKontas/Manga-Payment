@@ -22,7 +22,7 @@ public class RefundCreditEventHandler {
 
         var user = userCreditRepository.findById(userId).orElseThrow(() -> new ExceptionWithErrorCode("User not found", 404));
 
-        var isSuccess = user.addCredit(userCreditCreatedEvent.getCredit());
+        var isSuccess = user.addCredit(userCreditCreatedEvent.getCredit(), null);
 
         if(!isSuccess) {
             throw new ExceptionWithErrorCode("Failed to refund credit", 500);

@@ -31,7 +31,7 @@ public class Payment {
     private String cardAssociation;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Item> items;
+    private List<Item> items = List.of();
 
     protected Payment() {
 

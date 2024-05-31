@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class PaymentsController {
         this.queryGateway = queryGateway;
     }
 
-    @PostMapping("/create-payment")
+    @PostMapping("/create")
     public ResponseEntity<Result<CreatePaymentResponse>> createPayment(@RequestBody CreatePaymentRequest request, Authentication authentication) {
         var email = authentication.getPrincipal();
 
@@ -63,10 +64,10 @@ public class PaymentsController {
         return ResponseEntity.ok(Result.success(response));
     }
 
-    @GetMapping("/get-payment")
+    @GetMapping("/get")
     public ResponseEntity<Result<GetPaymentResponse>> getPayment(
             @RequestParam String paymentId,
-            @RequestParam UUID userId,
+            @RequestParam(required = false) UUID userId,
             Authentication authentication
     ) {
         var executorId = UUID.fromString(authentication.getCredentials().toString());
@@ -87,7 +88,7 @@ public class PaymentsController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<Result<Void>> getPayments(
+    public ResponseEntity<Result<GetPaymentsResponse>> getPayments(
         @RequestParam ZonedDateTime from,
         @RequestParam ZonedDateTime to,
         @RequestParam String sort,
@@ -116,12 +117,12 @@ public class PaymentsController {
         }
         response.setPayments(payments);
 
-        return ResponseEntity.ok(Result.success(null));
+        return ResponseEntity.ok(Result.success(response));
     }
 
-    @GetMapping("/get-payments-by-user")
+    @GetMapping("/get-by-user")
     public ResponseEntity<Result<GetPaymentsByUserResponse>> getPaymentsByUser(
-            @RequestParam UUID userId,
+            @RequestParam(required = false) UUID userId,
             @RequestParam ZonedDateTime from,
             @RequestParam ZonedDateTime to,
             @RequestParam String sort,

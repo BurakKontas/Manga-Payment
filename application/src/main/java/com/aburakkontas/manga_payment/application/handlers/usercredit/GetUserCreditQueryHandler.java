@@ -22,7 +22,6 @@ public class GetUserCreditQueryHandler {
 
         return new GetUserCreditQueryResult(
                 user.getCredit(),
-                user.getPaymentList(),
                 user.getSuccessfulTransactions(),
                 user.getFailedTransactions()
         );

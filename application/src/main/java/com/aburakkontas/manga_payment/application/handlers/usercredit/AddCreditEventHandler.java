@@ -48,7 +48,7 @@ public class AddCreditEventHandler {
 
         var user = userCreditRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new ExceptionWithErrorCode("User not found", 404));
 
-        user.addCredit(checkoutForm.getPrice());
+        user.addCredit(checkoutForm.getPrice(), checkoutForm.getPaymentId());
 
         var items = itemRepository.findByIds(checkoutForm.getItemIds());
 

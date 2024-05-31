@@ -53,10 +53,10 @@ public class UserCredit {
         return user;
     }
 
-    public boolean addCredit(Double credit) {
+    public boolean addCredit(Double credit, String paymentId) {
         this.credit += credit;
 
-        this.addTransaction(credit, CreditTransactionTypes.ADD_CREDIT, "Credit added to account.", true);
+        this.addTransaction(credit, CreditTransactionTypes.ADD_CREDIT, "Credit added to account.", true, paymentId);
 
         return true;
     }
@@ -93,7 +93,7 @@ public class UserCredit {
         return new ArrayList<>(creditTransactions.stream().filter(transaction -> !transaction.isTransactionSuccess()).toList());
     }
 
-    private CreditTransaction createTransaction(Double credit, CreditTransactionTypes transactionType, String description, boolean transactionSuccess) {
+    private CreditTransaction createTransaction(Double credit, CreditTransactionTypes transactionType, String description, boolean transactionSuccess, String paymentId) {
         var transaction = new CreditTransaction();
         transaction.setUserId(this.userId);
         transaction.setAmount(credit);
@@ -102,6 +102,7 @@ public class UserCredit {
         transaction.setTransactionSuccess(transactionSuccess);
         transaction.setDescription(description);
         transaction.setTransactionDate(java.time.ZonedDateTime.now());
+        transaction.setPaymentId(paymentId);
 
         return transaction;
     }
@@ -110,8 +111,13 @@ public class UserCredit {
         creditTransactions.add(transaction);
     }
 
+    private void addTransaction(Double credit, CreditTransactionTypes transactionType, String description, boolean transactionSuccess, String paymentId) {
+        var transaction = createTransaction(credit, transactionType, description, transactionSuccess, paymentId);
+        addTransaction(transaction);
+    }
+
     private void addTransaction(Double credit, CreditTransactionTypes transactionType, String description, boolean transactionSuccess) {
-        var transaction = createTransaction(credit, transactionType, description, transactionSuccess);
+        var transaction = createTransaction(credit, transactionType, description, transactionSuccess, null);
         addTransaction(transaction);
     }
 }
