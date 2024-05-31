@@ -28,7 +28,7 @@ public class GetPaymentsByUserQueryHandler {
         var paymentList = new ArrayList<GetPaymentQueryResult>();
 
         payments.forEach(payment -> {
-            var paymentResult = PaymentMapper.mapToQueryResult(payment, query.getExecutorId());
+            var paymentResult = PaymentMapper.mapToQueryResult(payment);
             paymentList.add(paymentResult);
         });
 

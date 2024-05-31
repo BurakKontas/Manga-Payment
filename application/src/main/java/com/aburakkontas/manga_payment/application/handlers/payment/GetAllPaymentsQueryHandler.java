@@ -27,7 +27,7 @@ public class GetAllPaymentsQueryHandler {
         var result = new GetPaymentsQueryResult();
         var paymentResults = new ArrayList<GetPaymentQueryResult>();
         for (Payment payment : payments) {
-            paymentResults.add(PaymentMapper.mapToQueryResult(payment, null));
+            paymentResults.add(PaymentMapper.mapToQueryResult(payment));
         }
         result.setPayments(paymentResults);
 

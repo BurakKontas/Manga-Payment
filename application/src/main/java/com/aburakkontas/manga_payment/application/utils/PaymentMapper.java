@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class PaymentMapper {
-    public static GetPaymentQueryResult mapToQueryResult(Payment payment, UUID executorId) {
+    public static GetPaymentQueryResult mapToQueryResult(Payment payment) {
         var queryResult = new GetPaymentQueryResult();
         queryResult.setPaymentId(payment.getPaymentId());
         queryResult.setUserId(payment.getUser().getUserId());
@@ -18,7 +18,6 @@ public class PaymentMapper {
         queryResult.setCardLastFourDigits(payment.getCardLastFourDigits());
         queryResult.setPrice(payment.getPrice());
         queryResult.setPaymentDate(payment.getPaymentDate());
-        queryResult.setExecutorId(executorId);
 
         var itemIds = new ArrayList<UUID>();
         for (Item item : payment.getItems()) {

@@ -67,17 +67,13 @@ public class PaymentsController {
     @GetMapping("/get")
     public ResponseEntity<Result<GetPaymentResponse>> getPayment(
             @RequestParam String paymentId,
-            @RequestParam(required = false) UUID userId,
             Authentication authentication
     ) {
-        var executorId = UUID.fromString(authentication.getCredentials().toString());
-
-        if(userId == null) userId = executorId;
+        var userId = UUID.fromString(authentication.getCredentials().toString());
 
         var query = GetPaymentQuery.builder()
                 .userId(userId)
                 .paymentId(paymentId)
-                .executorId(executorId)
                 .build();
 
         var result = queryGateway.query(query, GetPaymentQueryResult.class).join();

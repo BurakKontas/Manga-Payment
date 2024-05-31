@@ -12,6 +12,10 @@ public class AxonXStreamConfig {
     public XStream xStream() {
         XStream xStream = new XStream();
         xStream.addPermission(AnyTypePermission.ANY);
+        xStream.allowTypesByWildcard(new String[] {
+                "com.aburakkontas.**",
+                "java.**"
+        });
 
         return xStream;
     }

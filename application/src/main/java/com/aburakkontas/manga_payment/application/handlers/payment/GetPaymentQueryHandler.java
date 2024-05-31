@@ -24,7 +24,11 @@ public class GetPaymentQueryHandler {
 
     @QueryHandler
     public GetPaymentQueryResult handle(GetPaymentQuery query) {
-        if(query.getExecutorId() != query.getUserId()) {
+        var payment = paymentRepository.findById(query.getPaymentId()).orElseThrow(
+            () -> new ExceptionWithErrorCode("Payment not found with ID: " + query.getPaymentId(), 404)
+        );
+
+        if(!payment.getUser().getUserId().equals(query.getUserId())){
             var userQuery = GetUserDetailsByIdQuery.builder()
                     .userId(query.getUserId())
                     .build();
@@ -36,9 +40,6 @@ public class GetPaymentQueryHandler {
             }
         }
 
-        var payment = paymentRepository.findById(query.getPaymentId()).orElseThrow(
-            () -> new ExceptionWithErrorCode("Payment not found with ID: " + query.getPaymentId(), 404)
-        );
-        return PaymentMapper.mapToQueryResult(payment, query.getExecutorId());
+        return PaymentMapper.mapToQueryResult(payment);
     }
 }

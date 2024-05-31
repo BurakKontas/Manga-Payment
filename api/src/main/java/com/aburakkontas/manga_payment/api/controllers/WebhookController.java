@@ -4,15 +4,11 @@ import com.aburakkontas.manga.common.payment.commands.CreateUserCreditCommand;
 import com.aburakkontas.manga.common.payment.commands.PaymentReceivedCommand;
 import com.aburakkontas.manga_payment.contracts.request.FusionAuthEmailVerifiedWebhookRequest;
 import com.aburakkontas.manga_payment.contracts.request.IyzicoWebhookRequest;
-import com.aburakkontas.manga_payment.contracts.request.PaymentSuccessfullyRequest;
 import io.swagger.v3.oas.annotations.Hidden;
-import jakarta.servlet.http.HttpServletRequest;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.eventhandling.gateway.EventGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,18 +23,16 @@ public class WebhookController {
 
     private static final Logger log = LoggerFactory.getLogger(WebhookController.class);
     private final CommandGateway commandGateway;
-    private final Environment env;
 
     @Autowired
-    public WebhookController(CommandGateway commandGateway, EventGateway eventGateway, Environment env) {
+    public WebhookController(CommandGateway commandGateway) {
         this.commandGateway = commandGateway;
-        this.env = env;
     }
 
     @PostMapping("/fusion-verified")
     public ResponseEntity<Void> fusionVerified(@RequestBody FusionAuthEmailVerifiedWebhookRequest request) {
         var createUserCreditCommand = CreateUserCreditCommand.builder()
-                .userId(request.getEvent().getRegistration().getId())
+                .userId(request.getEvent().getUser().getId())
                 .build();
 
         commandGateway.sendAndWait(createUserCreditCommand);
