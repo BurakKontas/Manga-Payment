@@ -21,7 +21,7 @@ public class Payment {
     @Id
     private String paymentId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserCredit user;
     private Double price;
     private ZonedDateTime paymentDate;
@@ -31,7 +31,7 @@ public class Payment {
     private String cardAssociation;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Item> items = List.of();
+    private List<Item> items = new ArrayList<>();
 
     protected Payment() {
 

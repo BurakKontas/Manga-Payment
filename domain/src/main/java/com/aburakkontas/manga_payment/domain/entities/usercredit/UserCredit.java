@@ -25,14 +25,14 @@ public class UserCredit {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Getter(AccessLevel.PRIVATE)
-    private List<Payment> payments = List.of();
+    private List<Payment> payments = new ArrayList<>();
 
     @Transient
     private ArrayList<Payment> paymentsList = this.getPaymentList();
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Getter(AccessLevel.PRIVATE)
-    private List<CreditTransaction> creditTransactions = List.of();
+    private List<CreditTransaction> creditTransactions = new ArrayList<>();
 
     @Transient
     private ArrayList<CreditTransaction> transactions = this.getTransactions();
@@ -42,6 +42,11 @@ public class UserCredit {
 
     @Transient
     private ArrayList<CreditTransaction> failedTransactions = this.getFailedTransactions();
+
+    @Override
+    public String toString() {
+        return "UserCredit " + userId + " has " + credit + " credit.";
+    }
 
     public static UserCredit create(UUID userId) {
         var user = new UserCredit();
