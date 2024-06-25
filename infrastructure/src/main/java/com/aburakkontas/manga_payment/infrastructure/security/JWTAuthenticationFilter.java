@@ -46,7 +46,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             var user = queryGateway.query(query, GetUserDetailsFromTokenQueryResult.class).join();
 
-            var username = user.getUsername();
+            var username = user.getEmail();
             var permissions = user.getPermissions().stream().map(SimpleGrantedAuthority::new).toList();
             var credentials = user.getUserId();
 
